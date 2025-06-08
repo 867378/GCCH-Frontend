@@ -1,26 +1,27 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { initializeCsrfCookie } from './plugins/sanctum';
-
+// Remove CSRF import
 import App from "./App.vue";
 import router from "./router";
 import axios from "axios";
 
-axios.defaults.baseURL = "https://gcch-backend.onrender.com/api";
-axios.defaults.withCredentials = true;
-axios.defaults.withXSRFToken = true;
+axios.defaults.baseURL = "http://localhost:8000/api";
+// Remove CSRF related configs
+axios.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 const app = createApp(App);
 
-async function bootstrap(){
-    try {
-        await initializeCsrfCookie();
-        app.use(createPinia());
-        app.use(router);
-        app.mount("#app");
-    } catch (error) {
-        console.error("Failed to initialize CSRF cookie", error);
-    }
+// Simplify bootstrap without CSRF
+function bootstrap(){
+  app.use(createPinia());
+  app.use(router);
+  app.mount("#app");
 }
 
 bootstrap();
