@@ -10,6 +10,17 @@ const app = createApp(App);
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
+// Add a response interceptor
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      router.push('/login');
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Initialize CSRF cookie before app mount
 async function bootstrap() {
   try {
