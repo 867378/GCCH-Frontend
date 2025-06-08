@@ -89,66 +89,66 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
-  const userId = localStorage.getItem('user_id');
-  const role = localStorage.getItem('user_role');
-  const onboarding = localStorage.getItem('onboarding_in_progress') === 'true';
+// router.beforeEach(async (to, from, next) => {
+//   const userId = localStorage.getItem('user_id');
+//   const role = localStorage.getItem('user_role');
+//   const onboarding = localStorage.getItem('onboarding_in_progress') === 'true';
 
-  const publicPages = ['Login', 'Signup', 'Redirecting'];
-  const authRequired = !publicPages.includes(to.name);
+//   const publicPages = ['Login', 'Signup', 'Redirecting'];
+//   const authRequired = !publicPages.includes(to.name);
 
-  if (userId && publicPages.includes(to.name)) {
-    if (onboarding && (to.name === 'Signup' || to.name === 'Redirecting')) {
-      return next();
-    }
+//   if (userId && publicPages.includes(to.name)) {
+//     if (onboarding && (to.name === 'Signup' || to.name === 'Redirecting')) {
+//       return next();
+//     }
 
-    const fallback = role === 'company' || 'applicant' ? 'CompanyDash' : 'ApplicantDash';
-    return next({ name: fallback });
-  }
+//     const fallback = role === 'company' || 'applicant' ? 'CompanyDash' : 'ApplicantDash';
+//     return next({ name: fallback });
+//   }
 
-  if (!authRequired && !userId) {
-    return next();
-  }
+//   if (!authRequired && !userId) {
+//     return next();
+//   }
 
-  if (authRequired && !userId) {
-    return next({ name: 'Login' });
-  }
+//   if (authRequired && !userId) {
+//     return next({ name: 'Login' });
+//   }
   
 
-  if (!role && !onboarding && !publicPages.includes(to.name)) {
-    try {
-      const { data } = await axios.get(`/user/${userId}`);
-      localStorage.setItem('user_role', data.role);
-    } catch (error) {
-      console.error('Failed to fetch user role:', error);
-      return next({ name: 'Login' });
-    }
-  }
+//   if (!role && !onboarding && !publicPages.includes(to.name)) {
+//     try {
+//       const { data } = await axios.get(`/user/${userId}`);
+//       localStorage.setItem('user_role', data.role);
+//     } catch (error) {
+//       console.error('Failed to fetch user role:', error);
+//       return next({ name: 'Login' });
+//     }
+//   }
 
-  const updatedRole = localStorage.getItem('user_role');
+//   const updatedRole = localStorage.getItem('user_role');
 
-  const companyOnlyRoutes = ['CompanyDash', 'CompanyPost', 'CompanyMessage', 'CompanyAccepted', 'CompanyProfile'];
-  const applicantOnlyRoutes = ['ApplicantDash', 'ApplicantMessage', 'ApplicantProfile', 'Application'];
+//   const companyOnlyRoutes = ['CompanyDash', 'CompanyPost', 'CompanyMessage', 'CompanyAccepted', 'CompanyProfile'];
+//   const applicantOnlyRoutes = ['ApplicantDash', 'ApplicantMessage', 'ApplicantProfile', 'Application'];
 
-  const fallback = from.name || localStorage.getItem('last_valid_route') || 'Login';
+//   const fallback = from.name || localStorage.getItem('last_valid_route') || 'Login';
 
-  if (companyOnlyRoutes.includes(to.name) && updatedRole !== 'company') {
-    return next({ name: fallback });
-  }
+//   if (companyOnlyRoutes.includes(to.name) && updatedRole !== 'company') {
+//     return next({ name: fallback });
+//   }
 
-  if (applicantOnlyRoutes.includes(to.name) && updatedRole !== 'applicant') {
-    return next({ name: fallback });
-  }
+//   if (applicantOnlyRoutes.includes(to.name) && updatedRole !== 'applicant') {
+//     return next({ name: fallback });
+//   }
 
-  return next();
-});
+//   return next();
+// });
 
 
-router.afterEach((to) => {
-  const publicPages = ['Login', 'Signup', 'Redirecting'];
-  if (!publicPages.includes(to.name)) {
-    localStorage.setItem('last_valid_route', to.name);
-  }
-});
+// router.afterEach((to) => {
+//   const publicPages = ['Login', 'Signup', 'Redirecting'];
+//   if (!publicPages.includes(to.name)) {
+//     localStorage.setItem('last_valid_route', to.name);
+//   }
+// });
 
-export default router;
+// export default router;
